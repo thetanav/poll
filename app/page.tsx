@@ -3,25 +3,26 @@
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { IconArrowRight, IconChartBar, IconPlus } from "@tabler/icons-react";
+import { IconArrowRight, IconPlus, IconSparkles } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { user } = useUser();
+  const { isSignedIn } = useUser();
+  const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-12">
-          <div className="flex items-center gap-3">
-            <IconChartBar className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold text-slate-900">Poll</h1>
-          </div>
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex flex-col">
+      {/* Navbar */}
+      <nav className="bg-white border-b border-slate-200">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <Image src="/logo.png" width={40} height={40} alt="Logo" />
+            <span className="text-xl font-bold text-slate-900">Poll</span>
+          </Link>
 
           <div>
-            {user ? (
+            {isSignedIn ? (
               <UserButton />
             ) : (
               <SignInButton mode="modal">
@@ -30,83 +31,109 @@ export default function Home() {
             )}
           </div>
         </div>
+      </nav>
 
-        {/* Hero Section */}
-        <div className="mb-12">
-          <Card className="p-12 shadow-lg bg-white">
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-4xl font-bold text-slate-900 mb-2">
-                  Get answered. Create polls.
-                </h2>
-                <p className="text-xl text-slate-600">
-                  Ask your questions and let people vote on your polls in
-                  real-time.
-                </p>
+      {/* Main Content */}
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
+        <div className="max-w-3xl mx-auto text-center">
+          {/* Hero Section */}
+          <div className="space-y-8">
+            {/* Icon */}
+            <div className="flex justify-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                <IconSparkles size={32} className="text-blue-600" />
               </div>
+            </div>
 
-              <div>
-                <p className="text-slate-600 mb-4">
-                  Create engaging polls, collect opinions, and share results
-                  instantly with beautiful visualizations.
-                </p>
-              </div>
+            {/* Headline */}
+            <div className="space-y-3">
+              <h1 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight">
+                Get Answers.
+                <br />
+                Create Polls.
+              </h1>
+              <p className="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto">
+                Ask your questions and let people vote on your polls in
+                real-time
+              </p>
+            </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                {user ? (
-                  <Link href="/create" className="flex-1 sm:flex-none">
-                    <Button
-                      size="lg"
-                      className="w-full sm:w-auto flex items-center gap-2 font-bold cursor-pointer">
-                      <IconPlus size={20} />
-                      Create a Poll
-                    </Button>
-                  </Link>
-                ) : (
+            {/* Description */}
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Create engaging polls, collect opinions, and share results
+              instantly with beautiful visualizations. Perfect for surveys,
+              decisions, and fun community engagement.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              {isSignedIn ? (
+                <Link href="/home">
+                  <Button size="lg" className="flex items-center gap-2 px-8">
+                    <IconArrowRight size={20} />
+                    Go to Polls
+                  </Button>
+                </Link>
+              ) : (
+                <>
                   <SignInButton mode="modal">
-                    <Button size="lg" className="flex items-center gap-2">
+                    <Button size="lg" className="flex items-center gap-2 px-8">
                       <IconArrowRight size={20} />
                       Get Started
                     </Button>
                   </SignInButton>
-                )}
-              </div>
+                  <Link href="/home">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="flex items-center gap-2 px-8">
+                      <IconPlus size={20} />
+                      Browse Polls
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
-          </Card>
-        </div>
+          </div>
 
-        {/* Features Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              title: "Easy to Create",
-              description:
-                "Create polls in seconds with a simple and intuitive interface",
-              icon: "✨",
-            },
-            {
-              title: "Real-time Results",
-              description:
-                "See voting results update instantly as people respond",
-              icon: "⚡",
-            },
-            {
-              title: "Share & Engage",
-              description:
-                "Share polls with your audience and collect valuable feedback",
-              icon: "🎯",
-            },
-          ].map((feature, index) => (
-            <Card
-              key={index}
-              className="p-6 shadow-md hover:shadow-lg transition-shadow">
-              <div className="text-3xl mb-3">{feature.icon}</div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                {feature.title}
-              </h3>
-              <p className="text-slate-600">{feature.description}</p>
-            </Card>
-          ))}
+          {/* Features Grid */}
+          <div className="mt-20 pt-12 border-t border-slate-200">
+            <p className="text-sm font-semibold text-slate-500 mb-8">
+              WHY CHOOSE POLL
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  title: "Easy to Create",
+                  description:
+                    "Create polls in seconds with a simple and intuitive interface",
+                  icon: "✨",
+                },
+                {
+                  title: "Real-time Results",
+                  description:
+                    "See voting results update instantly as people respond",
+                  icon: "⚡",
+                },
+                {
+                  title: "Share & Engage",
+                  description:
+                    "Share polls with your audience and collect valuable feedback",
+                  icon: "🎯",
+                },
+              ].map((feature, index) => (
+                <div key={index} className="space-y-3">
+                  <div className="text-3xl">{feature.icon}</div>
+                  <h3 className="font-semibold text-slate-900">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-slate-600">
+                    {feature.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

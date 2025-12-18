@@ -75,7 +75,7 @@ export const getPoll = query({
 export const listPolls = query({
   args: {},
   async handler(ctx) {
-    const polls = await ctx.db.query("poll").collect();
+    const polls = await ctx.db.query("poll").take(10);
 
     // Fetch options and creator for each poll
     const enrichedPolls = await Promise.all(
