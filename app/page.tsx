@@ -1,16 +1,10 @@
 "use client";
 
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
-import Image from "next/image";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  IconArrowRight,
-  IconChartArea,
-  IconChartBar,
-  IconPlus,
-  IconSparkles,
-} from "@tabler/icons-react";
+import { IconChartArea, IconChartBar } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -43,46 +37,37 @@ export default function Home() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="space-y-8">
             <div className="space-y-7 py-24">
-              <h1 className="text-5xl font-bold text-slate-900 tracking-tight">
+              <h1 className="sm:text-5xl text-3xl font-bold text-slate-900 tracking-tight">
                 Get Answered.
                 <br />
                 Create Polls.
               </h1>
-              <p className="text-lg text-slate-600 max-w-md mx-auto">
+              <p className="sm:text-lg text-sm text-slate-600 max-w-sm sm:max-w-md mx-auto">
                 Ask your questions and let people vote on your polls in
                 real-time
               </p>
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <div className="flex flex-col sm:flex-row gap- items-center justify-center pt-4">
               {isSignedIn ? (
                 <Link href="/home">
                   <Button
                     size="lg"
-                    className="flex items-center gap-2 px-8 py-6 cursor-pointer font-bold text-md">
+                    className="flex items-center gap-2 px-8 py-6 cursor-pointer font-bold text-md shadow-lg shadow-primary/40">
                     <IconChartArea size={20} />
                     Go to Polls
                   </Button>
                 </Link>
               ) : (
-                <>
+                <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
                   <SignInButton mode="modal">
                     <Button size="lg" className="flex items-center gap-2 px-8">
-                      <IconArrowRight size={20} />
+                      <IconChartArea size={20} />
                       Get Started
                     </Button>
                   </SignInButton>
-                  <Link href="/home">
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="flex items-center gap-2 px-8">
-                      <IconPlus size={20} />
-                      Browse Polls
-                    </Button>
-                  </Link>
-                </>
+                </div>
               )}
             </div>
           </div>

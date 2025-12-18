@@ -127,7 +127,9 @@ export const Comments = ({ pollId }: { pollId: string }) => {
                   </div>
                 </div>
 
-                <Menu commentId={comment._id} />
+                {user?.id === comment.authorId && (
+                  <Menu commentId={comment._id} />
+                )}
               </div>
 
               {/* Comment Body */}

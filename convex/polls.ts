@@ -77,6 +77,18 @@ export const deletePolls = mutation({
     pollId: v.id("poll"),
   },
   async handler(ctx, args) {
+    const user = await getCurrentUser(ctx);
+    if (user?._id == null) throw new Error("Unauthorized");
+
+    const poll = await ctx.db.get(args.pollId);
+    if (!poll) {
+      throw new Error("Poll not found");
+    }
+
+    if (poll.creatorId !== user._id) {
+      throw new Error("You are not the creator of this poll");
+    }
+
     await ctx.db.delete(args.pollId);
   },
 });
@@ -246,6 +258,18 @@ export const deleteComment = mutation({
     commentId: v.id("comment"),
   },
   async handler(ctx, args) {
+    const user = await getCurrentUser(ctx);
+    if (user?._id == null) throw new Error("Unauthorized");
+
+    const comment = await ctx.db.get(args.commentId);
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
+
+    if (comment.authorId !== user._id) {
+      throw new Error("You are not the author of this comment");
+    }
+
     await ctx.db.delete(args.commentId);
   },
 });
