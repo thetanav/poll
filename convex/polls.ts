@@ -241,6 +241,15 @@ export const addComment = mutation({
   },
 });
 
+export const deleteComment = mutation({
+  args: {
+    commentId: v.id("comment"),
+  },
+  async handler(ctx, args) {
+    await ctx.db.delete(args.commentId);
+  },
+});
+
 export const getPollComments = query({
   args: {
     pollId: v.id("poll"),

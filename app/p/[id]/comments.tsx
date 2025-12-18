@@ -1,14 +1,25 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { IconDotsVertical, IconSend } from "@tabler/icons-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@clerk/nextjs";
-import { IconSend } from "@tabler/icons-react";
+import {
+  IconExclamationCircle,
+  IconMenu2,
+  IconTrash,
+} from "@tabler/icons-react";
 import { useMutation, useQuery } from "convex/react";
-import { useState } from "react";
 
 export const Comments = ({ pollId }: { pollId: string }) => {
   const { user } = useUser();
@@ -98,19 +109,25 @@ export const Comments = ({ pollId }: { pollId: string }) => {
               key={comment._id}
               className="pb-4 border-b border-slate-100 last:border-b-0">
               {/* Comment Author & Time */}
-              <div className="flex items-center gap-2 mb-2">
-                {comment.author?.imageUrl && (
-                  <img
-                    src={comment.author.imageUrl}
-                    className="w-6 h-6 rounded-full"
-                  />
-                )}
-                <span className="font-semibold text-sm text-slate-900">
-                  {comment.author?.name || "Anonymous"}
-                </span>
-                <span className="text-xs text-slate-500">
-                  {formatCommentDate(comment._creationTime)}
-                </span>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex gap-3 items-center justify-center">
+                  {comment.author?.imageUrl && (
+                    <img
+                      src={comment.author.imageUrl}
+                      className="w-9 rounded-full"
+                    />
+                  )}
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-sm text-slate-900">
+                      {comment.author?.name || "Anonymous"}
+                    </span>
+                    <span className="text-xs text-slate-500">
+                      {formatCommentDate(comment._creationTime)}
+                    </span>
+                  </div>
+                </div>
+
+                <Menu commentId={comment._id} />
               </div>
 
               {/* Comment Body */}
@@ -149,5 +166,36 @@ export const Comments = ({ pollId }: { pollId: string }) => {
         </p>
       )}
     </Card>
+  );
+};
+
+export const Menu = ({ commentId }: { commentId: string }) => {
+  const deleteComment = useMutation(api.polls.deleteComment);
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <Button size={"icon"} variant="outline">
+          <IconDotsVertical size={18} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="start"
+        alignOffset={0}
+        side="left"
+        sideOffset={4}>
+        <DropdownMenuItem
+          onClick={() =>
+            deleteComment({ commentId: commentId as Id<"comment"> })
+          }>
+          <IconTrash />
+          Delete
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <IconExclamationCircle />
+          Report
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

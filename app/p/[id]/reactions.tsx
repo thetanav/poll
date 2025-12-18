@@ -53,9 +53,9 @@ export const Reactions = ({ pollId }: { pollId: string }) => {
           No reactions yet. Be the first to react!
         </p>
       )}
-      <div className="relative ">
+      <div className="relative">
         {showEmojiPicker && (
-          <div className="absolute right-0 bottom-10 mt-2 p-4 bg-white border border-slate-200 rounded-lg shadow-lg z-10 grid grid-cols-4 gap-2 w-48">
+          <div className="absolute right-0 bottom-10 mt-2 p-4 bg-white border border-slate-200 rounded-lg shadow-lg z-10 grid grid-cols-4 gap-2 w-48 animate-in fade-in slide-in-from-bottom-5 slide-in-from-right-5 duration-200 ease">
             {EMOJI_REACTIONS.map((emoji) => (
               <button
                 key={emoji}

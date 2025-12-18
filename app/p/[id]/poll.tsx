@@ -71,9 +71,9 @@ export const Poll = ({ pollId }: { pollId: string }) => {
             key={option._id}
             onClick={() => handleVote(option._id)}
             disabled={isExpired || isVoting}
-            className="w-full text-left group">
+            className="w-full text-left group cursor-pointer">
             <div
-              className="relative overflow-hidden rounded-lg border-2 border-slate-200 hover:border-blue-400 transition-colors disabled:opacity-50"
+              className="relative overflow-hidden rounded-xl border-2 border-slate-200 hover:border-blue-400 transition-colors disabled:opacity-50"
               style={{
                 borderColor:
                   selectedOption === option._id

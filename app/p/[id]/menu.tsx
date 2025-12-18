@@ -37,7 +37,7 @@ export const Menu = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Button variant="outline" className="mb-6">
+        <Button variant="outline">
           <IconMenu2 size={18} />
         </Button>
       </DropdownMenuTrigger>

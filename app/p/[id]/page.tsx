@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   IconArrowLeft,
   IconClock,
-  IconHammer,
-  IconMenu2,
+  IconPresentation,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { Comments } from "./comments";
@@ -14,9 +13,8 @@ import { Reactions } from "./reactions";
 import { Poll } from "./poll";
 import { fetchQuery } from "convex/nextjs";
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
-import { NavigationMenuIcon } from "@base-ui/react";
 import { Menu } from "./menu";
+import { UserButton } from "@clerk/nextjs";
 
 export default async function PollPage({
   params,
@@ -68,16 +66,19 @@ export default async function PollPage({
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-6">
           <Link href="/home">
-            <Button variant="outline" className="mb-6">
+            <Button variant="outline">
               <IconArrowLeft size={18} />
               Back Home
             </Button>
           </Link>
-          <Suspense>
-            <Menu pollAuthor={poll.creator?.email!} pollId={id} />
-          </Suspense>
+          <div className="flex items-center gap-2">
+            <UserButton />
+            <Suspense>
+              <Menu pollAuthor={poll.creator?.email!} pollId={id} />
+            </Suspense>
+          </div>
         </div>
 
         <Card
@@ -120,7 +121,8 @@ export default async function PollPage({
 
             {/* Status */}
 
-            <p className="text-sm text-slate-600 ">
+            <p className="flex items-center gap-2">
+              <IconPresentation size={18} className="text-slate-400" />
               <span className="font-semibold">{totalVotes}</span> vote
               {totalVotes !== 1 ? "s" : ""}
             </p>
