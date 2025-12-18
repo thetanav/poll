@@ -36,15 +36,13 @@ export const Menu = ({
   if (pollAuthor != user?.emailAddresses?.[0]?.emailAddress) return;
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button variant="outline">
-          <IconMenu2 size={18} />
-        </Button>
+      <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50">
+        <IconMenu2 size={18} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="start"
+        align="end"
         alignOffset={0}
-        side="right"
+        side="bottom"
         sideOffset={4}>
         <DropdownMenuItem
           onClick={() => {

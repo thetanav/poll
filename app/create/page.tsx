@@ -219,7 +219,7 @@ export default function CreatePoll() {
 
             {/* Error Message */}
             {error && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
                 <p className="text-red-800 text-sm font-medium">{error}</p>
               </div>
             )}

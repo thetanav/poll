@@ -49,8 +49,8 @@ export const Reactions = ({ pollId }: { pollId: string }) => {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-slate-500">
-          No reactions yet. Be the first to react!
+        <p className="text-sm text-slate-500 italic">
+          No reactions yet. Be the first!
         </p>
       )}
       <div className="relative">

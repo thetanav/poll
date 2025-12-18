@@ -176,13 +176,11 @@ export const Menu = ({ commentId }: { commentId: string }) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button size={"icon"} variant="outline">
-          <IconDotsVertical size={18} />
-        </Button>
+      <DropdownMenuTrigger className="inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-md border border-slate-200 bg-white text-sm font-medium transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50">
+        <IconDotsVertical size={18} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="start"
+        align="end"
         alignOffset={0}
         side="left"
         sideOffset={4}>

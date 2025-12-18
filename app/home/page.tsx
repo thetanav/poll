@@ -82,8 +82,8 @@ export default async function HomePage() {
         {/* Loading State */}
         {polls === undefined ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <IconLoader2 className="animate-spin h-12 w-12 text-slate-400 mb-4" />
-            <p className="text-slate-600">Loading polls...</p>
+            <IconLoader2 className="animate-spin h-16 w-16 text-blue-500 mb-6" />
+            <p className="text-slate-600 text-lg font-medium">Loading polls...</p>
           </div>
         ) : sortedPolls.length === 0 ? (
           <Card className="p-12 text-center shadow-lg">

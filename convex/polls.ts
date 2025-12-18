@@ -12,19 +12,54 @@ export const createPoll = mutation({
   },
   async handler(ctx, args) {
     const user = await getCurrentUser(ctx);
+    if (user?._id == null) throw new Error("Please sign in to create a poll");
+
+    // Validate title
+    const trimmedTitle = args.title.trim();
+    if (!trimmedTitle) {
+      throw new Error("Poll title is required");
+    }
+    if (trimmedTitle.length > 200) {
+      throw new Error("Poll title is too long (max 200 characters)");
+    }
+
+    // Validate description
+    if (args.description && args.description.length > 1000) {
+      throw new Error("Poll description is too long (max 1000 characters)");
+    }
 
     // Validate options
     if (args.options.length < 2) {
       throw new Error("At least 2 options are required");
     }
 
-    if (args.options.some((opt) => !opt.trim())) {
+    if (args.options.length > 10) {
+      throw new Error("Maximum 10 options allowed");
+    }
+
+    const trimmedOptions = args.options.map((opt) => opt.trim());
+    if (trimmedOptions.some((opt) => !opt)) {
       throw new Error("Options cannot be empty");
+    }
+
+    if (trimmedOptions.some((opt) => opt.length > 200)) {
+      throw new Error("Options are too long (max 200 characters)");
+    }
+
+    // Check for duplicate options
+    const uniqueOptions = new Set(trimmedOptions);
+    if (uniqueOptions.size !== trimmedOptions.length) {
+      throw new Error("Duplicate options are not allowed");
+    }
+
+    // Validate expiration
+    if (args.expiresAt <= Date.now()) {
+      throw new Error("Poll expiration must be in the future");
     }
 
     // Create poll options
     const pollOptionIds: any[] = [];
-    for (const optionText of args.options) {
+    for (const optionText of trimmedOptions) {
       const optionId = await ctx.db.insert("pollOption", {
         text: optionText,
         votes: [],
@@ -34,9 +69,9 @@ export const createPoll = mutation({
 
     // Create poll
     const pollId = await ctx.db.insert("poll", {
-      title: args.title,
-      description: args.description,
-      creatorId: user?._id!,
+      title: trimmedTitle,
+      description: args.description?.trim(),
+      creatorId: user._id,
       option: pollOptionIds,
       expiresAt: args.expiresAt,
       themeColor: args.themeColor || "#3b82f6",
@@ -56,18 +91,18 @@ export const getPoll = query({
       throw new Error("Poll not found");
     }
 
-    // Fetch poll options
-    const pollOptions = await Promise.all(
-      poll.option.map((optId) => ctx.db.get(optId))
-    );
+    // Fetch poll options with null filtering
+    const pollOptions = (
+      await Promise.all(poll.option.map((optId) => ctx.db.get(optId)))
+    ).filter((opt) => opt !== null);
 
-    // Fetch creator
+    // Fetch creator with fallback
     const creator = await ctx.db.get(poll.creatorId);
 
     return {
       ...poll,
       pollOptions,
-      creator,
+      creator: creator || null,
     };
   },
 });
@@ -78,7 +113,7 @@ export const deletePolls = mutation({
   },
   async handler(ctx, args) {
     const user = await getCurrentUser(ctx);
-    if (user?._id == null) throw new Error("Unauthorized");
+    if (user?._id == null) throw new Error("Please sign in to delete polls");
 
     const poll = await ctx.db.get(args.pollId);
     if (!poll) {
@@ -86,30 +121,59 @@ export const deletePolls = mutation({
     }
 
     if (poll.creatorId !== user._id) {
-      throw new Error("You are not the creator of this poll");
+      throw new Error("Only the poll creator can delete this poll");
     }
 
+    // Delete all poll options
+    for (const optionId of poll.option) {
+      await ctx.db.delete(optionId);
+    }
+
+    // Delete all comments
+    const comments = await ctx.db
+      .query("comment")
+      .withIndex("by_poll", (q) => q.eq("pollId", args.pollId))
+      .collect();
+    for (const comment of comments) {
+      await ctx.db.delete(comment._id);
+    }
+
+    // Delete all reactions
+    const reactions = await ctx.db
+      .query("reaction")
+      .withIndex("by_poll", (q) => q.eq("pollId", args.pollId))
+      .collect();
+    for (const reaction of reactions) {
+      await ctx.db.delete(reaction._id);
+    }
+
+    // Delete the poll itself
     await ctx.db.delete(args.pollId);
+
+    return { success: true };
   },
 });
 
 export const listPolls = query({
   args: {},
   async handler(ctx) {
-    const polls = await ctx.db.query("poll").take(10);
+    const polls = await ctx.db
+      .query("poll")
+      .order("desc")
+      .take(50);
 
     // Fetch options and creator for each poll
     const enrichedPolls = await Promise.all(
       polls.map(async (poll) => {
-        const pollOptions = await Promise.all(
-          poll.option.map((optId) => ctx.db.get(optId))
-        );
+        const pollOptions = (
+          await Promise.all(poll.option.map((optId) => ctx.db.get(optId)))
+        ).filter((opt) => opt !== null);
         const creator = await ctx.db.get(poll.creatorId);
 
         return {
           ...poll,
           pollOptions,
-          creator,
+          creator: creator || null,
         };
       })
     );
@@ -125,7 +189,7 @@ export const vote = mutation({
   },
   async handler(ctx, args) {
     const user = await getCurrentUser(ctx);
-    if (user?._id == null) throw new Error("Unauthorized");
+    if (user?._id == null) throw new Error("Please sign in to vote");
 
     const poll = await ctx.db.get(args.pollId);
     if (!poll) {
@@ -133,7 +197,12 @@ export const vote = mutation({
     }
 
     if (poll.expiresAt < Date.now()) {
-      throw new Error("Poll has expired");
+      throw new Error("This poll has expired and is no longer accepting votes");
+    }
+
+    // Verify option belongs to this poll
+    if (!poll.option.includes(args.optionId)) {
+      throw new Error("Invalid option for this poll");
     }
 
     const option = await ctx.db.get(args.optionId);
@@ -141,25 +210,51 @@ export const vote = mutation({
       throw new Error("Option not found");
     }
 
-    if (option.votes.includes(user?._id!)) {
+    if (option.votes.includes(user._id)) {
       throw new Error("You have already voted for this option");
     }
 
-    // Remove user from other options if they voted before
+    // Remove user from other options if they voted before (atomic operation)
     for (const optionId of poll.option) {
       const opt = await ctx.db.get(optionId);
-      if (opt && opt.votes.includes(user?._id!)) {
-        // Remove user from this option
+      if (opt && opt.votes.includes(user._id)) {
         await ctx.db.patch(optionId, {
-          votes: opt.votes.filter((id) => id !== user?._id!),
+          votes: opt.votes.filter((id) => id !== user._id),
         });
       }
     }
 
     // Add vote
     await ctx.db.patch(args.optionId, {
-      votes: [...option.votes, user?._id!],
+      votes: [...option.votes, user._id],
     });
+
+    return { success: true };
+  },
+});
+
+export const removeVote = mutation({
+  args: {
+    pollId: v.id("poll"),
+  },
+  async handler(ctx, args) {
+    const user = await getCurrentUser(ctx);
+    if (user?._id == null) throw new Error("Unauthorized");
+
+    const poll = await ctx.db.get(args.pollId);
+    if (!poll) {
+      throw new Error("Poll not found");
+    }
+
+    // Remove user's vote from all options
+    for (const optionId of poll.option) {
+      const opt = await ctx.db.get(optionId);
+      if (opt && opt.votes.includes(user._id)) {
+        await ctx.db.patch(optionId, {
+          votes: opt.votes.filter((id) => id !== user._id),
+        });
+      }
+    }
 
     return { success: true };
   },
@@ -172,13 +267,20 @@ export const addReaction = mutation({
   },
   async handler(ctx, args) {
     const user = await getCurrentUser(ctx);
-    if (user?._id == null) throw new Error("Unauthorized");
+    if (user?._id == null) throw new Error("Please sign in to react");
 
-    // Check if user already added emoji reactions
+    // Verify poll exists
+    const poll = await ctx.db.get(args.pollId);
+    if (!poll) {
+      throw new Error("Poll not found");
+    }
+
+    // Check if user already added emoji reactions using index
     const existingReaction = await ctx.db
       .query("reaction")
-      .filter((q) => q.eq(q.field("pollId"), args.pollId))
-      .filter((q) => q.eq(q.field("userId"), user._id))
+      .withIndex("by_poll_and_user", (q) =>
+        q.eq("pollId", args.pollId).eq("userId", user._id)
+      )
       .first();
 
     if (existingReaction) {
@@ -205,7 +307,7 @@ export const getPollReactions = query({
   async handler(ctx, args) {
     const reactions = await ctx.db
       .query("reaction")
-      .filter((q) => q.eq(q.field("pollId"), args.pollId))
+      .withIndex("by_poll", (q) => q.eq("pollId", args.pollId))
       .collect();
 
     // Group reactions by emoji
@@ -234,10 +336,32 @@ export const addComment = mutation({
   },
   async handler(ctx, args) {
     const user = await getCurrentUser(ctx);
-    if (user?._id == null) throw new Error("Unauthorized");
+    if (user?._id == null) throw new Error("Please sign in to comment");
 
-    if (!args.body.trim()) {
+    const trimmedBody = args.body.trim();
+    if (!trimmedBody) {
       throw new Error("Comment cannot be empty");
+    }
+
+    if (trimmedBody.length > 2000) {
+      throw new Error("Comment is too long (max 2000 characters)");
+    }
+
+    // Verify poll exists
+    const poll = await ctx.db.get(args.pollId);
+    if (!poll) {
+      throw new Error("Poll not found");
+    }
+
+    // Verify parent comment exists if provided
+    if (args.parentId) {
+      const parentComment = await ctx.db.get(args.parentId);
+      if (!parentComment) {
+        throw new Error("Parent comment not found");
+      }
+      if (parentComment.pollId !== args.pollId) {
+        throw new Error("Parent comment does not belong to this poll");
+      }
     }
 
     // Create comment
@@ -245,7 +369,7 @@ export const addComment = mutation({
       pollId: args.pollId,
       authorId: user._id,
       authorName: args.authorName,
-      body: args.body,
+      body: trimmedBody,
       parentId: args.parentId,
     });
 
@@ -281,7 +405,7 @@ export const getPollComments = query({
   async handler(ctx, args) {
     const comments = await ctx.db
       .query("comment")
-      .filter((q) => q.eq(q.field("pollId"), args.pollId))
+      .withIndex("by_poll", (q) => q.eq("pollId", args.pollId))
       .filter((q) => q.eq(q.field("parentId"), undefined))
       .collect();
 
@@ -292,10 +416,10 @@ export const getPollComments = query({
           ? await ctx.db.get(comment.authorId)
           : null;
 
-        // Fetch replies
+        // Fetch replies using index
         const replies = await ctx.db
           .query("comment")
-          .filter((q) => q.eq(q.field("parentId"), comment._id))
+          .withIndex("by_parent", (q) => q.eq("parentId", comment._id))
           .collect();
 
         const enrichedReplies = await Promise.all(
