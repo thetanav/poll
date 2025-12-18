@@ -4,7 +4,13 @@ import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { IconArrowRight, IconPlus, IconSparkles } from "@tabler/icons-react";
+import {
+  IconArrowRight,
+  IconChartArea,
+  IconChartBar,
+  IconPlus,
+  IconSparkles,
+} from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -17,7 +23,7 @@ export default function Home() {
       <nav className="bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.png" width={40} height={40} alt="Logo" />
+            <IconChartBar className="w-8 h-8 text-primary" />
             <span className="text-xl font-bold text-slate-900">Poll</span>
           </Link>
 
@@ -33,44 +39,29 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="max-w-3xl mx-auto text-center">
-          {/* Hero Section */}
           <div className="space-y-8">
-            {/* Icon */}
-            <div className="flex justify-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                <IconSparkles size={32} className="text-blue-600" />
-              </div>
-            </div>
-
-            {/* Headline */}
-            <div className="space-y-3">
-              <h1 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight">
-                Get Answers.
+            <div className="space-y-7 py-24">
+              <h1 className="text-5xl font-bold text-slate-900 tracking-tight">
+                Get Answered.
                 <br />
                 Create Polls.
               </h1>
-              <p className="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto">
+              <p className="text-lg text-slate-600 max-w-md mx-auto">
                 Ask your questions and let people vote on your polls in
                 real-time
               </p>
             </div>
 
-            {/* Description */}
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Create engaging polls, collect opinions, and share results
-              instantly with beautiful visualizations. Perfect for surveys,
-              decisions, and fun community engagement.
-            </p>
-
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               {isSignedIn ? (
                 <Link href="/home">
-                  <Button size="lg" className="flex items-center gap-2 px-8">
-                    <IconArrowRight size={20} />
+                  <Button
+                    size="lg"
+                    className="flex items-center gap-2 px-8 py-6 cursor-pointer font-bold text-md">
+                    <IconChartArea size={20} />
                     Go to Polls
                   </Button>
                 </Link>

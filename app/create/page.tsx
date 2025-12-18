@@ -93,12 +93,9 @@ export default function CreatePoll() {
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">
             Create a Poll
           </h1>
-          <p className="text-slate-600">
-            Share your question and let others vote
-          </p>
         </div>
 
         <form onSubmit={handleSubmit}>

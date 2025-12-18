@@ -2,7 +2,12 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { IconArrowLeft, IconClock } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconClock,
+  IconHammer,
+  IconMenu2,
+} from "@tabler/icons-react";
 import Link from "next/link";
 import { Comments } from "./comments";
 import { Reactions } from "./reactions";
@@ -10,6 +15,8 @@ import { Poll } from "./poll";
 import { fetchQuery } from "convex/nextjs";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { NavigationMenuIcon } from "@base-ui/react";
+import { Menu } from "./menu";
 
 export default async function PollPage({
   params,
@@ -17,15 +24,16 @@ export default async function PollPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const poll = await fetchQuery(api.polls.getPoll, {
-    pollId: id as Id<"poll">,
-  });
-
-  if (!poll) {
+  let poll;
+  try {
+    poll = await fetchQuery(api.polls.getPoll, {
+      pollId: id as Id<"poll">,
+    });
+  } catch {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-8 px-4">
         <div className="max-w-2xl mx-auto">
-          <Link href="/">
+          <Link href="/home">
             <Button variant="outline" className="mb-8">
               <IconArrowLeft size={18} />
               Back Home
@@ -56,18 +64,21 @@ export default async function PollPage({
       0
     ) || 0;
 
-  if (!poll) return notFound();
-
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <Link href="/">
-          <Button variant="outline" className="mb-6">
-            <IconArrowLeft size={18} />
-            Back Home
-          </Button>
-        </Link>
+        <div className="flex items-center justify-between">
+          <Link href="/home">
+            <Button variant="outline" className="mb-6">
+              <IconArrowLeft size={18} />
+              Back Home
+            </Button>
+          </Link>
+          <Suspense>
+            <Menu pollAuthor={poll.creator?.email!} pollId={id} />
+          </Suspense>
+        </div>
 
         <Card
           className="p-8 shadow-lg space-y-4 mb-8"

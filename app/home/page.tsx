@@ -1,6 +1,3 @@
-"use client";
-
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,9 +10,10 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import { fetchQuery } from "convex/nextjs";
 
-export default function HomePage() {
-  const polls = useQuery(api.polls.listPolls);
+export default async function HomePage() {
+  const polls = await fetchQuery(api.polls.listPolls);
 
   // Sort polls by total votes (descending)
   const sortedPolls =
@@ -31,7 +29,6 @@ export default function HomePage() {
       .sort((a, b) => b.totalVotes - a.totalVotes) || [];
 
   const isExpired = (expiresAt: number) => expiresAt < Date.now();
-
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString("en-US", {
@@ -71,7 +68,7 @@ export default function HomePage() {
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-7 py-12">
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-3xl font-bold text-slate-600 mb-2">

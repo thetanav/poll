@@ -5,11 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useUser } from "@clerk/nextjs";
 import { IconSend } from "@tabler/icons-react";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 
 export const Comments = ({ pollId }: { pollId: string }) => {
+  const { user } = useUser();
   const addCommentMutation = useMutation(api.polls.addComment);
   const [commentText, setCommentText] = useState("");
   const [isAddingComment, setIsAddingComment] = useState(false);
@@ -62,33 +64,33 @@ export const Comments = ({ pollId }: { pollId: string }) => {
     <Card className="p-6 shadow-lg">
       <h3 className="text-lg font-semibold text-slate-900 mb-6">Comments</h3>
 
-      {/* Add Comment */}
-      <form
-        onSubmit={handleAddComment}
-        className="mb-6 pb-6 border-b border-slate-200">
-        <div className="space-y-3">
-          <Textarea
-            placeholder="Share your thoughts..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            disabled={isAddingComment}
-            rows={3}
-            className="resize-none"
-          />
-          {commentError && (
-            <p className="text-red-600 text-sm">{commentError}</p>
-          )}
-          <Button
-            type="submit"
-            disabled={isAddingComment || !commentText.trim()}
-            className="w-full flex items-center justify-center gap-2">
-            <IconSend size={18} />
-            {isAddingComment ? "Posting..." : "Post Comment"}
-          </Button>
-        </div>
-      </form>
+      {user && (
+        <form
+          onSubmit={handleAddComment}
+          className="mb-6 pb-6 border-b border-slate-200">
+          <div className="space-y-3">
+            <Textarea
+              placeholder="Share your thoughts..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              disabled={isAddingComment}
+              rows={3}
+              className="resize-none"
+            />
+            {commentError && (
+              <p className="text-red-600 text-sm">{commentError}</p>
+            )}
+            <Button
+              type="submit"
+              disabled={isAddingComment || !commentText.trim()}
+              className="w-full flex items-center justify-center gap-2">
+              <IconSend size={18} />
+              {isAddingComment ? "Posting..." : "Post Comment"}
+            </Button>
+          </div>
+        </form>
+      )}
 
-      {/* Comments List */}
       {comments && comments.length > 0 ? (
         <div className="space-y-4">
           {comments.map((comment: any) => (

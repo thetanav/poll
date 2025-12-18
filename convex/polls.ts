@@ -72,6 +72,15 @@ export const getPoll = query({
   },
 });
 
+export const deletePolls = mutation({
+  args: {
+    pollId: v.id("poll"),
+  },
+  async handler(ctx, args) {
+    await ctx.db.delete(args.pollId);
+  },
+});
+
 export const listPolls = query({
   args: {},
   async handler(ctx) {
