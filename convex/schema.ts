@@ -11,7 +11,6 @@ export default defineSchema({
   }).index("by_clerkId", ["clerkId"]),
 
   poll: defineTable({
-    pollId: v.id("poll"),
     title: v.string(),
     description: v.optional(v.string()),
     creatorId: v.id("user"),
@@ -21,15 +20,8 @@ export default defineSchema({
   }),
 
   pollOption: defineTable({
-    optionId: v.id("option"),
-    option: v.string(),
+    text: v.string(),
     votes: v.array(v.id("user")),
-  }),
-
-  vote: defineTable({
-    voteId: v.id("vote"),
-    pollId: v.id("poll"),
-    userId: v.id("user"),
   }),
 
   comment: defineTable({

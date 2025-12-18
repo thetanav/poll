@@ -19,7 +19,10 @@ export const upsertFromClerk = internalMutation({
       email: data.email_addresses?.[0]?.email_address,
     };
 
-    const user = await userByExternalId(ctx, data.id);
+    const user = await ctx.db
+      .query("user")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", data.id))
+      .unique();
     if (user === null) {
       await ctx.db.insert("user", userAttributes);
     } else {
@@ -31,7 +34,10 @@ export const upsertFromClerk = internalMutation({
 export const deleteFromClerk = internalMutation({
   args: { clerkUserId: v.string() },
   async handler(ctx, { clerkUserId }) {
-    const user = await userByExternalId(ctx, clerkUserId);
+    const user = await ctx.db
+      .query("user")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkUserId))
+      .unique();
 
     if (user !== null) {
       await ctx.db.delete(user._id);
@@ -43,23 +49,11 @@ export const deleteFromClerk = internalMutation({
   },
 });
 
-export async function getCurrentUserOrThrow(ctx: QueryCtx) {
-  const userRecord = await getCurrentUser(ctx);
-  if (!userRecord) throw new Error("Can't get current user");
-  return userRecord;
-}
-
-export async function getCurrentUser(ctx: QueryCtx) {
+export async function getCurrentUser(ctx: QueryCtx, clerkUserId?: string) {
   const identity = await ctx.auth.getUserIdentity();
-  if (identity === null) {
-    return null;
-  }
-  return await userByExternalId(ctx, identity.subject);
-}
-
-async function userByExternalId(ctx: QueryCtx, externalId: string) {
+  if (identity === null) return null;
   return await ctx.db
     .query("user")
-    .withIndex("by_clerkId", (q) => q.eq("clerkId", externalId))
+    .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
     .unique();
 }
