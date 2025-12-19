@@ -1,15 +1,11 @@
-"use client";
-
-import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
-
+import { SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { IconChartArea, IconChartBar } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 
-export default function Home() {
-  const { isSignedIn } = useUser();
-  const router = useRouter();
+export default async function Home() {
+  const { isAuthenticated } = await auth();
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex flex-col">
@@ -22,7 +18,7 @@ export default function Home() {
           </Link>
 
           <div>
-            {isSignedIn ? (
+            {isAuthenticated ? (
               <UserButton />
             ) : (
               <SignInButton mode="modal">
@@ -50,7 +46,7 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap- items-center justify-center pt-4">
-              {isSignedIn ? (
+              {isAuthenticated ? (
                 <Link href="/home">
                   <Button
                     size="lg"

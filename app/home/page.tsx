@@ -83,7 +83,9 @@ export default async function HomePage() {
         {polls === undefined ? (
           <div className="flex flex-col items-center justify-center py-20">
             <IconLoader2 className="animate-spin h-16 w-16 text-blue-500 mb-6" />
-            <p className="text-slate-600 text-lg font-medium">Loading polls...</p>
+            <p className="text-slate-600 text-lg font-medium">
+              Loading polls...
+            </p>
           </div>
         ) : sortedPolls.length === 0 ? (
           <Card className="p-12 text-center shadow-lg">
@@ -182,15 +184,6 @@ export default async function HomePage() {
                         <IconArrowRight size={14} />
                       </div>
                     </div>
-
-                    {/* Expired Badge */}
-                    {expired && (
-                      <div className="mt-3 pt-3 border-t border-slate-200">
-                        <span className="text-xs font-semibold px-2 py-1 bg-red-100 text-red-700 rounded-full">
-                          Closed
-                        </span>
-                      </div>
-                    )}
                   </Card>
                 </Link>
               );

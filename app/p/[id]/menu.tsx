@@ -16,6 +16,7 @@ import {
   IconExclamationCircle,
   IconExclamationMark,
   IconMenu2,
+  IconPresentation,
   IconTrash,
 } from "@tabler/icons-react";
 import { useMutation } from "convex/react";
@@ -23,9 +24,11 @@ import { useRouter } from "next/navigation";
 import { Router } from "next/router";
 
 export const Menu = ({
+  votes,
   pollAuthor,
   pollId,
 }: {
+  votes: number;
   pollAuthor: string;
   pollId: string;
 }) => {
@@ -36,7 +39,7 @@ export const Menu = ({
   if (pollAuthor != user?.emailAddresses?.[0]?.emailAddress) return;
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50">
+      <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap border border-slate-200 bg-white p-2 text-sm font-medium transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50">
         <IconMenu2 size={18} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -55,6 +58,11 @@ export const Menu = ({
         <DropdownMenuItem>
           <IconExclamationCircle />
           Report
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <IconPresentation />
+          {votes} vote
+          {votes !== 1 ? "s" : ""}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -127,9 +127,8 @@ export const Comments = ({ pollId }: { pollId: string }) => {
                   </div>
                 </div>
 
-                {user?.id === comment.authorId && (
-                  <Menu commentId={comment._id} />
-                )}
+                {user?.emailAddresses?.[0]?.emailAddress ===
+                  comment.author?.email && <Menu commentId={comment._id} />}
               </div>
 
               {/* Comment Body */}
@@ -176,11 +175,11 @@ export const Menu = ({ commentId }: { commentId: string }) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-md border border-slate-200 bg-white text-sm font-medium transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50">
+      <DropdownMenuTrigger className="inline-flex h-9 w-9 items-center justify-center whitespace-nowrap border border-slate-200 bg-white text-sm font-medium transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50">
         <IconDotsVertical size={18} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="end"
+        align="start"
         alignOffset={0}
         side="left"
         sideOffset={4}>

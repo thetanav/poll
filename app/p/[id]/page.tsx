@@ -76,21 +76,32 @@ export default async function PollPage({
           <div className="flex items-center gap-2">
             <UserButton />
             <Suspense>
-              <Menu pollAuthor={poll.creator?.email!} pollId={id} />
+              <Menu
+                votes={totalVotes}
+                pollAuthor={poll.creator?.email!}
+                pollId={id}
+              />
             </Suspense>
           </div>
         </div>
 
         <Card
-          className="p-8 shadow-lg space-y-4 mb-8"
+          className="p-8 shadow-lg space-y-0 mb-8"
           style={{ borderTop: `4px solid ${poll.themeColor || "#3b82f6"}` }}>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
-            {poll.title}
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">
+              {poll.title}
+            </h1>
+            {poll.expiresAt < Date.now() && (
+              <span className="bg-red-200 rounded-full px-3 py-1 font-xs text-xs text-red-700">
+                EXPIRED
+              </span>
+            )}
+          </div>
           {poll.description && (
             <p className="text-slate-600 mb-4 text-lg">{poll.description}</p>
           )}
-          <div className="flex flex-wrap items-center gap-4 mb-6 pb-6 border-b border-slate-200">
+          <div className="flex flex-wrap items-center gap-4 mb-2">
             {/* Creator */}
             {poll.creator && (
               <div className="flex items-center gap-2">
@@ -118,14 +129,6 @@ export default async function PollPage({
                 </span>
               </span>
             </div>
-
-            {/* Status */}
-
-            <p className="flex items-center gap-2">
-              <IconPresentation size={18} className="text-slate-400" />
-              <span className="font-semibold">{totalVotes}</span> vote
-              {totalVotes !== 1 ? "s" : ""}
-            </p>
           </div>
           <Suspense>
             <Poll pollId={id} />
