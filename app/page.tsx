@@ -1,113 +1,84 @@
 import { SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { IconChartArea, IconChartBar } from "@tabler/icons-react";
+import { IconChartBar, IconArrowRight } from "@tabler/icons-react";
 import { auth } from "@clerk/nextjs/server";
 
 export default async function Home() {
   const { isAuthenticated } = await auth();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100 flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Navbar */}
-      <nav className="bg-white border-b border-neutral-200">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <IconChartBar className="w-8 h-8 text-primary" />
-            <span className="text-xl font-bold text-neutral-900">Poll</span>
+      <nav className="border-b border-neutral-100">
+        <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <IconChartBar className="w-6 h-6 text-blue-500" />
+            <span className="text-lg font-bold text-neutral-900">Poll</span>
           </Link>
 
           <div>
             {isAuthenticated ? (
-              <UserButton />
+              <div className="flex items-center gap-3">
+                <Link href="/home">
+                  <Button variant="ghost" size="sm">
+                    Dashboard
+                  </Button>
+                </Link>
+                <UserButton />
+              </div>
             ) : (
               <SignInButton mode="modal">
-                <Button>Sign In</Button>
+                <Button size="sm" variant="ghost">
+                  Sign In
+                </Button>
               </SignInButton>
             )}
           </div>
         </div>
       </nav>
 
-      <div className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="space-y-8">
-            <div className="space-y-7 py-24">
-              <h1 className="sm:text-5xl text-3xl font-bold text-neutral-900 tracking-tight">
-                Get Answered.
-                <br />
-                Create Polls.
-              </h1>
-              <p className="sm:text-lg text-sm text-neutral-600 max-w-sm sm:max-w-md mx-auto">
-                Ask your questions and let people vote on your polls in
-                real-time
-              </p>
-            </div>
+      {/* Hero */}
+      <div className="flex-1 flex items-center justify-center px-6">
+        <div className="max-w-xl w-full text-center py-20">
+          <h1 className="text-4xl sm:text-5xl font-bold text-neutral-900 tracking-tight mb-6">
+            Create polls.
+            <br />
+            Get answers.
+          </h1>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap- items-center justify-center pt-4">
-              {isAuthenticated ? (
-                <Link href="/home">
-                  <Button
-                    size="lg"
-                    className="flex items-center gap-2 px-8 py-6 cursor-pointer font-bold text-md shadow-lg shadow-primary/40">
-                    <IconChartArea size={20} />
-                    Go to Polls
-                  </Button>
-                </Link>
-              ) : (
-                <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-                  <SignInButton mode="modal">
-                    <Button size="lg" className="flex items-center gap-2 px-8">
-                      <IconChartArea size={20} />
-                      Get Started
-                    </Button>
-                  </SignInButton>
-                </div>
-              )}
-            </div>
-          </div>
+          <p className="text-lg text-neutral-500 mb-10 max-w-md mx-auto">
+            Real-time voting. No sign-up required for voters. Free forever.
+          </p>
 
-          {/* Features Grid */}
-          <div className="mt-20 pt-12 border-t border-neutral-200">
-            <p className="text-sm font-semibold text-neutral-500 mb-8">
-              WHY CHOOSE POLL
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  title: "Easy to Create",
-                  description:
-                    "Create polls in seconds with a simple and intuitive interface",
-                  icon: "✨",
-                },
-                {
-                  title: "Real-time Results",
-                  description:
-                    "See voting results update instantly as people respond",
-                  icon: "⚡",
-                },
-                {
-                  title: "Share & Engage",
-                  description:
-                    "Share polls with your audience and collect valuable feedback",
-                  icon: "🎯",
-                },
-              ].map((feature, index) => (
-                <div key={index} className="space-y-3">
-                  <div className="text-3xl">{feature.icon}</div>
-                  <h3 className="font-semibold text-neutral-900">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-neutral-600">
-                    {feature.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          {isAuthenticated ? (
+            <Link href="/home">
+              <Button
+                size="lg"
+                className="px-8 py-6 text-base font-semibold gap-2">
+                Go to Dashboard
+                <IconArrowRight size={18} />
+              </Button>
+            </Link>
+          ) : (
+            <SignInButton mode="modal">
+              <Button
+                size="lg"
+                className="px-8 py-6 text-base font-semibold gap-2 cursor-pointer">
+                Start Creating
+                <IconArrowRight size={18} />
+              </Button>
+            </SignInButton>
+          )}
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-neutral-100 py-6">
+        <div className="max-w-3xl mx-auto px-6 text-center text-sm text-neutral-400">
+          Free and open source
+        </div>
+      </footer>
     </div>
   );
 }

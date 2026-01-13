@@ -46,7 +46,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
-              <div className="bg-linear-to-r from-green-600 to-green-700 p-2 rounded-lg inset-2">
+              <div className="bg-linear-to-r from-blue-500 to-blue-600 p-2 rounded-lg inset-2">
                 <IconChartBar className="w-5 h-5 text-background" />
               </div>
               <span className="text-xl font-black text-neutral-600">Poll</span>

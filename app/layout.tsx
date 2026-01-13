@@ -11,8 +11,40 @@ const sans = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Poll",
-  description: "Get Answered. Create Polls.",
+  title: {
+    default: "Poll - Create polls. Get answers.",
+    template: "%s | Poll",
+  },
+  description: "Real-time voting. No sign-up required for voters. Free forever.",
+  keywords: ["poll", "polls", "survey", "voting", "feedback", "real-time"],
+  authors: [{ name: "Poll" }],
+  creator: "Poll",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://poll.vercel.app"
+  ),
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Poll",
+    title: "Poll - Create polls. Get answers.",
+    description: "Real-time voting. No sign-up required for voters. Free forever.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Poll - Create polls. Get answers.",
+    description: "Real-time voting. No sign-up required for voters. Free forever.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -23,7 +55,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${sans.className} antialiased`}>
-        <NextTopLoader color="oklch(59.6% 0.145 163.225)" showSpinner={false} />
+        <NextTopLoader color="#3b82f6" showSpinner={false} />
         <Providers>{children}</Providers>
         <Analytics />
       </body>

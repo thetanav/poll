@@ -94,7 +94,7 @@ export const Poll = ({ pollId }: { pollId: string }) => {
             key={option._id}
             onClick={() => handleVote(option._id)}
             disabled={isVoting}
-            className="w-full text-left relative overflow-hidden cursor-pointer  transition-all duration-200 hover:bg-neutral-100 disabled:opacity-50">
+            className="w-full text-left relative overflow-hidden cursor-pointer transition-all duration-200 hover:bg-neutral-100 disabled:opacity-50">
             {/* Content */}
             <div className="relative p-2 flex items-center justify-between">
               <div>
