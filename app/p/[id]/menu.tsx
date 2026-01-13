@@ -39,7 +39,7 @@ export const Menu = ({
   if (pollAuthor != user?.emailAddresses?.[0]?.emailAddress) return;
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap border border-slate-200 bg-white p-2 text-sm font-medium transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50">
+      <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap border border-neutral-200 bg-white p-2 text-sm font-medium transition-colors hover:bg-neutral-50 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50">
         <IconMenu2 size={18} />
       </DropdownMenuTrigger>
       <DropdownMenuContent

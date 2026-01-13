@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { IconDotsVertical, IconSend } from "@tabler/icons-react";
+import { IconDotsVertical, IconLoader2, IconSend } from "@tabler/icons-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -73,31 +73,34 @@ export const Comments = ({ pollId }: { pollId: string }) => {
   };
   return (
     <Card className="p-6 shadow-lg">
-      <h3 className="text-lg font-semibold text-slate-900 mb-6">Comments</h3>
-
+      <h3 className="text-lg font-semibold text-neutral-900">Comments</h3>
       {user && (
-        <form
-          onSubmit={handleAddComment}
-          className="mb-6 pb-6 border-b border-slate-200">
+        <form onSubmit={handleAddComment}>
           <div className="space-y-3">
-            <Textarea
-              placeholder="Share your thoughts..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              disabled={isAddingComment}
-              rows={3}
-              className="resize-none"
-            />
+            <div className="relative">
+              <Textarea
+                placeholder="Share your thoughts..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                disabled={isAddingComment}
+                rows={4}
+                className="resize-none"
+              />
+              <Button
+                type="submit"
+                size="icon-sm"
+                disabled={isAddingComment || !commentText.trim()}
+                className="flex items-center justify-center gap-2 absolute right-1 bottom-1">
+                {isAddingComment ? (
+                  <IconLoader2 className="animate-spin" />
+                ) : (
+                  <IconSend size={18} />
+                )}
+              </Button>
+            </div>
             {commentError && (
               <p className="text-red-600 text-sm">{commentError}</p>
             )}
-            <Button
-              type="submit"
-              disabled={isAddingComment || !commentText.trim()}
-              className="w-full flex items-center justify-center gap-2">
-              <IconSend size={18} />
-              {isAddingComment ? "Posting..." : "Post Comment"}
-            </Button>
           </div>
         </form>
       )}
@@ -107,7 +110,7 @@ export const Comments = ({ pollId }: { pollId: string }) => {
           {comments.map((comment: any) => (
             <div
               key={comment._id}
-              className="pb-4 border-b border-slate-100 last:border-b-0">
+              className="pb-4 border-b border-neutral-100 last:border-b-0">
               {/* Comment Author & Time */}
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="flex gap-3 items-center justify-center">
@@ -118,10 +121,10 @@ export const Comments = ({ pollId }: { pollId: string }) => {
                     />
                   )}
                   <div className="flex flex-col">
-                    <span className="font-semibold text-sm text-slate-900">
+                    <span className="font-semibold text-sm text-neutral-900">
                       {comment.author?.name || "Anonymous"}
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-neutral-500">
                       {formatCommentDate(comment._creationTime)}
                     </span>
                   </div>
@@ -132,11 +135,11 @@ export const Comments = ({ pollId }: { pollId: string }) => {
               </div>
 
               {/* Comment Body */}
-              <p className="text-slate-700 mb-3">{comment.body}</p>
+              <p className="text-neutral-700 mb-3">{comment.body}</p>
 
               {/* Replies */}
               {comment.replies && comment.replies.length > 0 && (
-                <div className="ml-6 space-y-3 pt-3 border-l-2 border-slate-200 pl-4">
+                <div className="ml-6 space-y-3 pt-3 border-l-2 border-neutral-200 pl-4">
                   {comment.replies.map((reply: any) => (
                     <div key={reply._id}>
                       <div className="flex items-center gap-2 mb-1">
@@ -146,14 +149,14 @@ export const Comments = ({ pollId }: { pollId: string }) => {
                             className="w-5 h-5 rounded-full"
                           />
                         )}
-                        <span className="font-semibold text-sm text-slate-900">
+                        <span className="font-semibold text-sm text-neutral-900">
                           {reply.author?.name || "Anonymous"}
                         </span>
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-neutral-500">
                           {formatCommentDate(reply._creationTime)}
                         </span>
                       </div>
-                      <p className="text-slate-700 text-sm">{reply.body}</p>
+                      <p className="text-neutral-700 text-sm">{reply.body}</p>
                     </div>
                   ))}
                 </div>
@@ -162,7 +165,7 @@ export const Comments = ({ pollId }: { pollId: string }) => {
           ))}
         </div>
       ) : (
-        <p className="text-center text-slate-500">
+        <p className="text-center text-neutral-500">
           No comments yet. Start the conversation!
         </p>
       )}
@@ -175,7 +178,7 @@ export const Menu = ({ commentId }: { commentId: string }) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex h-9 w-9 items-center justify-center whitespace-nowrap border border-slate-200 bg-white text-sm font-medium transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50">
+      <DropdownMenuTrigger className="inline-flex h-9 w-9 items-center justify-center whitespace-nowrap border border-neutral-200 bg-white text-sm font-medium transition-colors hover:bg-neutral-50 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50">
         <IconDotsVertical size={18} />
       </DropdownMenuTrigger>
       <DropdownMenuContent

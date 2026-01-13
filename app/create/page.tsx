@@ -90,10 +90,10 @@ export default function CreatePoll() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-8 px-4">
+    <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
+          <h1 className="text-3xl font-bold text-neutral-900 mb-2">
             Create a Poll
           </h1>
         </div>
@@ -113,7 +113,7 @@ export default function CreatePoll() {
                 disabled={isLoading}
                 className="text-lg h-12"
               />
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-neutral-500">
                 Make it clear and engaging
               </p>
             </div>
@@ -138,7 +138,7 @@ export default function CreatePoll() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-base font-semibold">Poll Options</Label>
-                <span className="text-sm text-slate-500">
+                <span className="text-sm text-neutral-500">
                   Minimum 2 options
                 </span>
               </div>
@@ -146,7 +146,7 @@ export default function CreatePoll() {
               <div className="space-y-3">
                 {options.map((option, index) => (
                   <div key={option.id} className="flex gap-3 items-center">
-                    <span className="text-sm font-medium text-slate-400 min-w-8">
+                    <span className="text-sm font-medium text-neutral-400 min-w-8">
                       {index + 1}.
                     </span>
                     <Input
@@ -190,7 +190,7 @@ export default function CreatePoll() {
                 value={expiresIn}
                 onChange={(e) => setExpiresIn(e.target.value)}
                 disabled={isLoading}
-                className="w-full px-3 py-2 h-10 border border-slate-200 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
+                className="w-full px-3 py-2 h-10 border border-neutral-200 rounded-lg bg-white text-neutral-900 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
                 <option value="1">1 Hour</option>
                 <option value="6">6 Hours</option>
                 <option value="24">1 Day</option>
@@ -213,7 +213,7 @@ export default function CreatePoll() {
                   disabled={isLoading}
                   className="w-16 h-10 rounded-lg cursor-pointer"
                 />
-                <span className="text-sm text-slate-600">{themeColor}</span>
+                <span className="text-sm text-neutral-600">{themeColor}</span>
               </div>
             </div>
 

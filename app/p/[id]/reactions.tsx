@@ -40,7 +40,7 @@ export const Reactions = ({ pollId }: { pollId: string }) => {
             <button
               key={reaction.emoji}
               onClick={() => handleAddReaction(reaction.emoji)}
-              className="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center gap-1 transition-colors">
+              className="px-2 py-1 bg-neutral-100 hover:bg-neutral-200 rounded-full flex items-center gap-1 transition-colors">
               <span className="text-lg">{reaction.emoji}</span>
               <span className="text-xs font-medium text-slate-600">
                 {reaction.count}
@@ -55,7 +55,7 @@ export const Reactions = ({ pollId }: { pollId: string }) => {
       )}
       <div className="relative">
         {showEmojiPicker && (
-          <div className="absolute right-0 bottom-10 mt-2 p-4 bg-white border border-slate-200 rounded-lg shadow-lg z-10 grid grid-cols-4 gap-2 w-48 animate-in fade-in slide-in-from-bottom-5 slide-in-from-right-5 duration-200 ease">
+          <div className="absolute right-0 bottom-10 mt-2 p-4 bg-white border border-slate-200 rounded-xl shadow-lg z-10 grid grid-cols-4 gap-2 w-48 animate-in fade-in slide-in-from-bottom-5 slide-in-from-right-5 duration-200 ease">
             {EMOJI_REACTIONS.map((emoji) => (
               <button
                 key={emoji}

@@ -2,11 +2,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  IconArrowLeft,
-  IconClock,
-  IconPresentation,
-} from "@tabler/icons-react";
+import { IconArrowLeft, IconClock } from "@tabler/icons-react";
 import Link from "next/link";
 import { Comments } from "./comments";
 import { Reactions } from "./reactions";
@@ -29,7 +25,7 @@ export default async function PollPage({
     });
   } catch {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-8 px-4">
+      <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100 py-8 px-4">
         <div className="max-w-2xl mx-auto">
           <Link href="/home">
             <Button variant="outline" className="mb-8">
@@ -38,7 +34,7 @@ export default async function PollPage({
             </Button>
           </Link>
           <Card className="p-8 text-center">
-            <p className="text-lg text-slate-600">Poll not exist. </p>
+            <p className="text-lg text-neutral-600">Poll not exist. </p>
           </Card>
         </div>
       </div>
@@ -63,7 +59,7 @@ export default async function PollPage({
     ) || 0;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-8 px-4">
+    <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -86,10 +82,10 @@ export default async function PollPage({
         </div>
 
         <Card
-          className="p-8 shadow-lg space-y-0 mb-8"
+          className="py-6 px-8 shadow-lg mb-8"
           style={{ borderTop: `4px solid ${poll.themeColor || "#3b82f6"}` }}>
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">
+            <h1 className="text-2xl font-bold text-neutral-900">
               {poll.title}
             </h1>
             {poll.expiresAt < Date.now() && (
@@ -99,31 +95,29 @@ export default async function PollPage({
             )}
           </div>
           {poll.description && (
-            <p className="text-slate-600 mb-4 text-lg">{poll.description}</p>
+            <p className="text-neutral-600 text-sm">{poll.description}</p>
           )}
-          <div className="flex flex-wrap items-center gap-4 mb-2">
+          <div className="flex flex-wrap items-center gap-4">
             {/* Creator */}
             {poll.creator && (
               <div className="flex items-center gap-2">
                 {poll.creator.imageUrl && (
                   <img
                     src={poll.creator.imageUrl}
-                    className="border w-6 h-6 rounded-full"
+                    className="w-5 h-5 rounded-full"
                   />
                 )}
-                <span className="text-sm text-slate-600">
-                  <span className="font-semibold">
-                    {poll.creator.name || "Anonymous"}
-                  </span>
+                <span className="text-sm text-neutral-600">
+                  {poll.creator.name || "Anonymous"}
                 </span>
               </div>
             )}
 
             {/* Expiration */}
             <div className="flex items-center gap-2">
-              <IconClock size={18} className="text-slate-400" />
-              <span className="text-sm text-slate-600">
-                Expires:{" "}
+              <IconClock size={14} className="text-neutral-400" />
+              <span className="text-xs text-neutral-600">
+                Expires on:{" "}
                 <span className="font-semibold">
                   {formatDate(poll.expiresAt)}
                 </span>

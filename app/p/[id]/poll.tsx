@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { IconLoader2, IconX } from "@tabler/icons-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const Poll = ({ pollId }: { pollId: string }) => {
   const poll = useQuery(api.polls.getPoll, {
@@ -79,29 +80,7 @@ export const Poll = ({ pollId }: { pollId: string }) => {
     : null;
 
   return (
-    <div className="space-y-4">
-      {/* Remove Vote Button */}
-      {userVotedOption && !isExpired && (
-        <div className="flex items-end justify-end">
-          <Button
-            variant="outline"
-            onClick={handleRemoveVote}
-            disabled={isVoting}>
-            {isVoting ? (
-              <div className="flex items-center gap-2">
-                <IconLoader2 className="animate-spin" />
-                Loading...
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <IconX size={18} />
-                {isVoting ? "Removing..." : "Remove My Vote"}
-              </div>
-            )}
-          </Button>
-        </div>
-      )}
-
+    <div className="my-4">
       {poll.pollOptions?.map((option: any) => {
         if (!option) return null;
         const votes = option.votes?.length || 0;
@@ -115,20 +94,13 @@ export const Poll = ({ pollId }: { pollId: string }) => {
             key={option._id}
             onClick={() => handleVote(option._id)}
             disabled={isVoting}
-            className={`w-full text-left relative overflow-hidden rounded-xl border-2 cursor-pointer  transition-all duration-200 hover:scale-[1.01] active:scale-100 disabled:opacity-50 ${isUserVote ? "border-emerald-600" : "border-slate-200"}`}>
-            {/* Progress Bar */}
-            <div
-              className="absolute inset-0 bg-blue-100 transition-all duration-300 ease-out"
-              style={{
-                width: `${percentage}%`,
-                backgroundColor: poll.themeColor
-                  ? `${poll.themeColor}10`
-                  : undefined,
-              }}></div>
-
+            className="w-full text-left relative overflow-hidden cursor-pointer  transition-all duration-200 hover:bg-neutral-100 disabled:opacity-50">
             {/* Content */}
-            <div className="relative p-4 flex items-center justify-between">
-              <div className="flex-1">
+            <div className="relative p-2 flex items-center justify-between">
+              <div>
+                <Checkbox defaultChecked={isUserVote} checked={isUserVote} />
+              </div>
+              <div className="flex-1 ml-3">
                 <p className="text-lg font-semibold text-slate-900">
                   {option.text}
                 </p>
@@ -140,9 +112,39 @@ export const Poll = ({ pollId }: { pollId: string }) => {
                 </p>
               </div>
             </div>
+            <div
+              className="bg-blue-600 transition-all duration-300 ease-out h-px"
+              style={{
+                width: `${percentage}%`,
+                backgroundColor: poll.themeColor
+                  ? `${poll.themeColor}`
+                  : undefined,
+              }}></div>
           </button>
         );
       })}
+
+      {/* Remove Vote Button */}
+      {userVotedOption && !isExpired && (
+        <div className="flex items-end justify-end mt-3">
+          <Button
+            variant="outline"
+            onClick={handleRemoveVote}
+            disabled={isVoting}>
+            {isVoting ? (
+              <div className="flex items-center gap-2">
+                <IconLoader2 className="animate-spin" />
+                Loading...
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <IconX size={18} />
+                {isVoting ? "removing..." : "remove"}
+              </div>
+            )}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

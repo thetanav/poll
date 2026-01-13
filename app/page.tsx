@@ -8,13 +8,13 @@ export default async function Home() {
   const { isAuthenticated } = await auth();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex flex-col">
+    <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100 flex flex-col">
       {/* Navbar */}
-      <nav className="bg-white border-b border-slate-200">
+      <nav className="bg-white border-b border-neutral-200">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <IconChartBar className="w-8 h-8 text-primary" />
-            <span className="text-xl font-bold text-slate-900">Poll</span>
+            <span className="text-xl font-bold text-neutral-900">Poll</span>
           </Link>
 
           <div>
@@ -33,12 +33,12 @@ export default async function Home() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="space-y-8">
             <div className="space-y-7 py-24">
-              <h1 className="sm:text-5xl text-3xl font-bold text-slate-900 tracking-tight">
+              <h1 className="sm:text-5xl text-3xl font-bold text-neutral-900 tracking-tight">
                 Get Answered.
                 <br />
                 Create Polls.
               </h1>
-              <p className="sm:text-lg text-sm text-slate-600 max-w-sm sm:max-w-md mx-auto">
+              <p className="sm:text-lg text-sm text-neutral-600 max-w-sm sm:max-w-md mx-auto">
                 Ask your questions and let people vote on your polls in
                 real-time
               </p>
@@ -69,8 +69,8 @@ export default async function Home() {
           </div>
 
           {/* Features Grid */}
-          <div className="mt-20 pt-12 border-t border-slate-200">
-            <p className="text-sm font-semibold text-slate-500 mb-8">
+          <div className="mt-20 pt-12 border-t border-neutral-200">
+            <p className="text-sm font-semibold text-neutral-500 mb-8">
               WHY CHOOSE POLL
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -96,10 +96,10 @@ export default async function Home() {
               ].map((feature, index) => (
                 <div key={index} className="space-y-3">
                   <div className="text-3xl">{feature.icon}</div>
-                  <h3 className="font-semibold text-slate-900">
+                  <h3 className="font-semibold text-neutral-900">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-neutral-600">
                     {feature.description}
                   </p>
                 </div>
