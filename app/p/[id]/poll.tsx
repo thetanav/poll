@@ -5,8 +5,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { IconLoader2, IconX } from "@tabler/icons-react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { IconLoader2, IconCheck, IconX } from "@tabler/icons-react";
 
 export const Poll = ({ pollId }: { pollId: string }) => {
   const poll = useQuery(api.polls.getPoll, {
@@ -23,7 +22,7 @@ export const Poll = ({ pollId }: { pollId: string }) => {
   if (!poll)
     return (
       <div className="flex flex-col items-center justify-center py-12 gap-2">
-        <IconLoader2 className="animate-spin" />
+        <IconLoader2 className="animate-spin text-blue-500" />
         <p className="text-slate-500 font-medium">Loading poll...</p>
       </div>
     );
@@ -32,8 +31,7 @@ export const Poll = ({ pollId }: { pollId: string }) => {
 
   const handleVote = async (optionId: Id<"pollOption">) => {
     if (isExpired) {
-      alert("Poll has expired");
-      return;
+      return; // Silent return or maybe a toast in the future
     }
     setIsVoting(true);
     setVoteError(null);
@@ -79,71 +77,119 @@ export const Poll = ({ pollId }: { pollId: string }) => {
       )
     : null;
 
+  // Find the winner if expired
+  const winnerOption = isExpired
+    ? poll.pollOptions?.reduce((prev: any, current: any) =>
+        (prev?.votes?.length || 0) > (current?.votes?.length || 0)
+          ? prev
+          : current
+      )
+    : null;
+
   return (
-    <div className="my-4">
-      {poll.pollOptions?.map((option: any) => {
+    <div className="my-6 space-y-3">
+      {poll.pollOptions?.map((option: any, index: number) => {
         if (!option) return null;
         const votes = option.votes?.length || 0;
         const percentage =
           totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
         const isUserVote =
           currentUser && option.votes?.includes(currentUser._id);
+        const isWinner =
+          isExpired && winnerOption && winnerOption._id === option._id;
 
         return (
           <button
             key={option._id}
             onClick={() => handleVote(option._id)}
-            disabled={isVoting}
-            className="w-full text-left relative overflow-hidden cursor-pointer transition-all duration-200 hover:bg-neutral-100 disabled:opacity-50">
-            {/* Content */}
-            <div className="relative p-2 flex items-center justify-between">
-              <div>
-                <Checkbox defaultChecked={isUserVote} checked={isUserVote} />
-              </div>
-              <div className="flex-1 ml-3">
-                <p className="text-lg font-semibold text-slate-900">
-                  {option.text}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold text-slate-900">{percentage}%</p>
-                <p className="text-sm text-slate-500">
-                  {votes} vote{votes !== 1 ? "s" : ""}
-                </p>
-              </div>
-            </div>
+            disabled={isVoting || isExpired}
+            className={`w-full relative overflow-hidden rounded-xl border-2 transition-all duration-200 group animate-in fade-in slide-in-from-bottom-2 fill-mode-both
+              ${
+                isUserVote
+                  ? "border-blue-500 bg-blue-50/50"
+                  : isWinner
+                    ? "border-yellow-400 bg-yellow-50/50"
+                    : "border-neutral-100 bg-white hover:border-blue-200 hover:bg-neutral-50"
+              }
+              ${isExpired && !isWinner && !isUserVote ? "opacity-60 grayscale-[0.5]" : ""}
+            `}
+            style={{ animationDelay: `${index * 50}ms` }}>
+            {/* Progress Bar Background */}
             <div
-              className="bg-blue-600 transition-all duration-300 ease-out h-px"
+              className={`absolute top-0 bottom-0 left-0 transition-all duration-700 ease-out opacity-10
+                ${isWinner ? "bg-yellow-500" : "bg-blue-500"}
+              `}
               style={{
                 width: `${percentage}%`,
-                backgroundColor: poll.themeColor
-                  ? `${poll.themeColor}`
-                  : undefined,
+                backgroundColor:
+                  poll.themeColor && !isWinner ? poll.themeColor : undefined,
               }}></div>
+
+            <div className="relative p-4 flex items-center justify-between z-10">
+              <div className="flex items-center gap-3 text-left">
+                {/* Custom Checkbox/Radio Indicator */}
+                <div
+                  className={`w-6 h-6 rounded-full flex items-center justify-center border-2 transition-colors
+                    ${
+                      isUserVote
+                        ? "border-blue-500 bg-blue-500 text-white"
+                        : "border-neutral-300 group-hover:border-blue-300"
+                    }
+                  `}>
+                  {isUserVote && <IconCheck size={14} stroke={3} />}
+                </div>
+
+                <div className="flex flex-col">
+                  <span
+                    className={`text-base font-semibold ${isUserVote ? "text-blue-900" : "text-neutral-800"}`}>
+                    {option.text}
+                  </span>
+                  {isWinner && (
+                    <span className="text-xs font-bold text-yellow-600 uppercase tracking-wider">
+                      Winner
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="text-right">
+                <span className="block text-lg font-bold text-neutral-900 leading-none">
+                  {percentage}%
+                </span>
+                <span className="text-xs text-neutral-500 font-medium">
+                  {votes} vote{votes !== 1 ? "s" : ""}
+                </span>
+              </div>
+            </div>
           </button>
         );
       })}
 
-      {/* Remove Vote Button */}
-      {userVotedOption && !isExpired && (
-        <div className="flex items-end justify-end mt-3">
+      {/* Footer Actions */}
+      <div className="flex items-center justify-between pt-2 px-1">
+        <p className="text-sm text-neutral-500">
+          Total votes: <span className="font-semibold">{totalVotes}</span>
+        </p>
+
+        {userVotedOption && !isExpired && (
           <Button
-            variant="outline"
+            variant="ghost"
+            size="sm"
             onClick={handleRemoveVote}
-            disabled={isVoting}>
+            disabled={isVoting}
+            className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8">
             {isVoting ? (
-              <div className="flex items-center gap-2">
-                <IconLoader2 className="animate-spin" />
-                Loading...
-              </div>
+              <IconLoader2 className="animate-spin w-4 h-4 mr-2" />
             ) : (
-              <div className="flex items-center gap-2">
-                <IconX size={18} />
-                {isVoting ? "removing..." : "remove"}
-              </div>
+              <IconX className="w-4 h-4 mr-2" />
             )}
+            Remove my vote
           </Button>
-        </div>
+        )}
+      </div>
+
+      {voteError && (
+        <p className="text-red-500 text-sm text-center mt-2">{voteError}</p>
       )}
     </div>
   );

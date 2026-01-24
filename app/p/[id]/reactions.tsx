@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { IconMoodSmile } from "@tabler/icons-react";
+import { IconMoodSmile, IconPlus } from "@tabler/icons-react";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 
@@ -33,48 +33,52 @@ export const Reactions = ({ pollId }: { pollId: string }) => {
   };
 
   return (
-    <div className="flex items-center justify-between">
-      {reactions && reactions.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
-          {reactions.map((reaction: any) => (
+    <div className="mt-6 pt-6 border-t border-neutral-100">
+      <div className="flex flex-wrap items-center gap-2">
+        {reactions &&
+          reactions.map((reaction: any) => (
             <button
               key={reaction.emoji}
               onClick={() => handleAddReaction(reaction.emoji)}
-              className="px-2 py-1 bg-neutral-100 hover:bg-neutral-200 rounded-full flex items-center gap-1 transition-colors">
-              <span className="text-lg">{reaction.emoji}</span>
-              <span className="text-xs font-medium text-slate-600">
+              className="group flex items-center gap-1.5 px-3 py-1.5 bg-white border border-neutral-200 hover:border-blue-400 hover:bg-blue-50 hover:shadow-sm rounded-full transition-all active:scale-95 duration-200">
+              <span className="text-lg leading-none filter grayscale-[0.2] group-hover:grayscale-0 transition-all">
+                {reaction.emoji}
+              </span>
+              <span className="text-xs font-semibold text-neutral-600 group-hover:text-blue-600">
                 {reaction.count}
               </span>
             </button>
           ))}
+
+        <div className="relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            disabled={isAddingReaction}
+            className="h-9 w-9 rounded-full p-0 border border-dashed border-neutral-300 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50 text-neutral-400 transition-all">
+            <IconPlus size={18} />
+          </Button>
+
+          {showEmojiPicker && (
+            <>
+              <div
+                className="fixed inset-0 z-10"
+                onClick={() => setShowEmojiPicker(false)}
+              />
+              <div className="absolute left-0 top-full mt-2 p-3 bg-white border border-neutral-200 rounded-2xl shadow-xl shadow-neutral-200/50 z-20 grid grid-cols-4 gap-2 w-52 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+                {EMOJI_REACTIONS.map((emoji) => (
+                  <button
+                    key={emoji}
+                    onClick={() => handleAddReaction(emoji)}
+                    className="p-2 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer text-2xl flex items-center justify-center hover:scale-110 active:scale-95 duration-200">
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
-      ) : (
-        <p className="text-sm text-slate-500 italic">
-          No reactions yet. Be the first!
-        </p>
-      )}
-      <div className="relative">
-        {showEmojiPicker && (
-          <div className="absolute right-0 bottom-10 mt-2 p-4 bg-white border border-slate-200 rounded-xl shadow-lg z-10 grid grid-cols-4 gap-2 w-48 animate-in fade-in slide-in-from-bottom-5 slide-in-from-right-5 duration-200 ease">
-            {EMOJI_REACTIONS.map((emoji) => (
-              <button
-                key={emoji}
-                onClick={() => handleAddReaction(emoji)}
-                className="text-2xl hover:scale-125 transition-transform cursor-pointer select-none">
-                {emoji}
-              </button>
-            ))}
-          </div>
-        )}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          disabled={isAddingReaction}
-          className="flex items-center gap-2">
-          <IconMoodSmile size={18} />
-          Add Reaction
-        </Button>
       </div>
     </div>
   );
